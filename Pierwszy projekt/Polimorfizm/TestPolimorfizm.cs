@@ -6,9 +6,11 @@ namespace Polimorfizm
 {
     class Baza
     {
+        protected int x;
         public void HelloWorld()
         {
             Console.WriteLine("Hello world");
+            x = (int)1.5;
         }
 
         public virtual void Wyswietl()
@@ -22,6 +24,7 @@ namespace Polimorfizm
         public override void Wyswietl()
         {
             Console.WriteLine("Metoda wyswietl z klasy A");
+            x = 1;
         }
     }
 
@@ -45,6 +48,7 @@ namespace Polimorfizm
             Console.WriteLine(a is Baza);
             Console.WriteLine(a is Object);*/
             a.Wyswietl();
+            //a.x = 1;
             //a.HelloWorld();
 
             B b = new B();
