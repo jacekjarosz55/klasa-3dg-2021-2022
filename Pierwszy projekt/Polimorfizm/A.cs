@@ -11,6 +11,11 @@ namespace Polimorfizm.Test
         {
 
         }
+
+        public virtual void Info()
+        {
+            Console.WriteLine("Metoda info z klasy A");
+        }
     }
 
     class B : A
@@ -51,6 +56,11 @@ namespace Polimorfizm.Test
 
         }
 
+        public override void Info()
+        {
+            Console.WriteLine("Metoda info z klasy E");
+        }
+
     }
 
     class F : B
@@ -76,6 +86,29 @@ namespace Polimorfizm.Test
 
             F f = new F();
             f.XYZ();
+
+            E ee = new E();
+            ee.XYZ(); // z klasy E
+            B bb = new E();
+            bb.XYZ(); // z klasy A
+            A aa = new E();
+            aa.XYZ(); //z klasy A
+            //C cc = new F();
+
+
+            E eee = new E();
+            eee.Info(); // z klasy E
+            B bbb = new D();
+            bbb.Info(); // z klasy A
+            A aaa = new E();
+            aaa.Info(); //z klasy A
+
+            A aaaa;
+            if ((new Random()).Next() % 2 == 0)
+                aaaa = new C();
+            else
+                aaaa = new F();
+            aaaa.Info();
         }
 
     }
