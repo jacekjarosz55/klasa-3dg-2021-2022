@@ -19,7 +19,7 @@ namespace Polimorfizm.Geometria
             this.wysokoscA2 = wysokoscA2;
         }
 
-        public new void ObliczObwod()
+        public override void ObliczObwod()
         {
             obwod = bokA + bokB + bokC + bokD;
 
@@ -27,12 +27,12 @@ namespace Polimorfizm.Geometria
             obwod += bokD;*/
         }
 
-        public new void ObliczPole()
+        public override void ObliczPole()
         {
             throw new NotImplementedException("Nie jesteśmy w stanie obliczyć");
         }
 
-        public new void Info()
+        public override void Info()
         {
             //base.Info();
             Console.WriteLine("Informacja o obiekcie " + nazwa);

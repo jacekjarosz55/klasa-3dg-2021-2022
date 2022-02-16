@@ -19,16 +19,16 @@ namespace Polimorfizm.Geometria
             this.wysokoscA = wysokoscA;
         }
 
-        public void ObliczPole()
+        public override void ObliczPole()
         {
             pole = bokA * wysokoscA / 2;
         }
 
-        public void ObliczObwod()
+        public override void ObliczObwod()
         {
             obwod = bokA + bokB + bokC;
         }
-        public new void Info()
+        public override void Info()
         {
             base.Info();
             Console.WriteLine("Bok a " + bokA);

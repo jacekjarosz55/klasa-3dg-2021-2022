@@ -15,7 +15,7 @@ namespace Polimorfizm.Geometria
 
         }
 
-        public new void ObliczPole()
+        public override void ObliczPole()
         {
             pole = (bokA + bokC) * wysokoscA / 2;
         }
