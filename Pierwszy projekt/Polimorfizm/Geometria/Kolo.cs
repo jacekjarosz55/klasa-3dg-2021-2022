@@ -12,6 +12,13 @@ namespace Polimorfizm.Geometria
         {
             this.promien = promien;
         }
+        public Kolo(Dictionary<string, object> dana) : base(dana)
+        {
+            if (dana.ContainsKey("promien"))
+                promien = (double)dana["promien"];
+            else
+                promien = 0;
+        }
 
         public override void Info()
         {
@@ -27,6 +34,14 @@ namespace Polimorfizm.Geometria
         public override void ObliczObwod()
         {
             obwod = 2 * Math.PI * promien;
+        }
+
+        public override Dictionary<string, object> Pakuj()
+        {
+            Dictionary<string, object> dana = base.Pakuj();
+            dana.Add("promien", promien);
+
+            return dana;
         }
     }
 }

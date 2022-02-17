@@ -10,11 +10,34 @@ namespace Polimorfizm.Geometria
         protected double pole;
         protected double obwod;
 
+        protected Dictionary<string, object> kolekcjaPolDospakowania = new Dictionary<string, object>();
+
         public Figura(string nazwa)
         {
             this.nazwa = nazwa;
             pole = 0;
             obwod = 0;
+        }
+
+        public Figura(Dictionary<string, object> dana)
+        {
+            if (dana.ContainsKey("nazwa"))
+                nazwa = dana["nazwa"].ToString();
+            else
+                nazwa = "";
+
+            /*if (dana.ContainsKey("pole"))
+                pole = (double) dana["pole"];
+            else
+                pole = 0;
+
+            if (dana.ContainsKey("obwod"))
+                obwod = (double)dana["obwod"];
+            else
+                obwod = 0;*/
+
+            //pole = 0;
+            //obwod = 0;
         }
 
         public abstract void ObliczPole();
@@ -27,35 +50,15 @@ namespace Polimorfizm.Geometria
             Console.WriteLine("Pole " + pole);
             Console.WriteLine("Obwod " + obwod);
         }
-    }
 
-    
-    interface IXyz
-    {
-        public void A();
-        public void B();
-        public void C();
-        public void D();
-    }
-
-    class Abc: IXyz
-    {
-        public override void A()
+        public virtual Dictionary<string, object> Pakuj()
         {
+            Dictionary<string, object> dana = new Dictionary<string, object>();
+            dana.Add("nazwa", nazwa);
+            /*dana.Add("pole", pole);
+            dana.Add("obwod", obwod);*/
 
+            return dana;
         }
-        public override void B()
-        {
-
-        }
-        public override void C()
-        {
-
-        }
-        public override void D()
-        {
-
-        }
-    }
-    
+    }    
 }

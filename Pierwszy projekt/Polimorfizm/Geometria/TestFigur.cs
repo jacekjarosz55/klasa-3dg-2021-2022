@@ -46,6 +46,8 @@ namespace Polimorfizm.Geometria
             PracaNaObiekcie(kolo);
 
             //Figura f = new Figura("adsads");
+
+            SpakujIWyslij(kolo);
         }
 
         void PracaNaObiekcie(Figura f)
@@ -53,6 +55,22 @@ namespace Polimorfizm.Geometria
             f.ObliczObwod();
             f.ObliczPole();
             f.Info();
+        }
+
+        public void SpakujIWyslij(Figura obiektDoWyslania)
+        {
+            Dictionary<string, object> dana = obiektDoWyslania.Pakuj();
+
+            WyslijDane wyslijDane = new WyslijDane();
+            wyslijDane.Wyslij(dana);
+        }
+    }
+
+    class WyslijDane
+    {
+        public void Wyslij(Dictionary<string, object> dane)
+        {
+            //kod do wysyłania
         }
     }
 }
