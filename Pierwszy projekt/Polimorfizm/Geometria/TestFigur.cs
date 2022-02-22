@@ -48,6 +48,9 @@ namespace Polimorfizm.Geometria
             //Figura f = new Figura("adsads");
 
             SpakujIWyslij(kolo);
+
+            Pies pies = new Pies();
+            SpakujIWyslij(pies);
         }
 
         void PracaNaObiekcie(Figura f)
@@ -60,9 +63,67 @@ namespace Polimorfizm.Geometria
         public void SpakujIWyslij(Figura obiektDoWyslania)
         {
             Dictionary<string, object> dana = obiektDoWyslania.Pakuj();
+        
+            WyslijDane wyslijDane = new WyslijDane();
+            wyslijDane.Wyslij(dana);
+        }
+
+        public void SpakujIWyslij(Zwierze obiektDoWyslania)
+        {
+            Dictionary<string, object> dana = obiektDoWyslania.Pakuj();
 
             WyslijDane wyslijDane = new WyslijDane();
             wyslijDane.Wyslij(dana);
+        }
+
+        public void SpakujIWyslij(Object obiektDoWyslania)
+        {
+            Dictionary<string, object> dana = null;
+
+            Zwierze z = obiektDoWyslania as Zwierze;
+            if (z != null)
+                dana = z.Pakuj();
+            Figura f = obiektDoWyslania as Figura;
+            if (f != null)
+                dana = f.Pakuj();
+
+            WyslijDane wyslijDane = new WyslijDane();
+            wyslijDane.Wyslij(dana);
+        }
+
+        public void SpakujIWyslij(IPakowalne obiektDoWyslania)
+        {
+            Dictionary<string, object> dana = obiektDoWyslania.PakujInterfejs();
+
+            WyslijDane wyslijDane = new WyslijDane();
+            wyslijDane.Wyslij(dana);
+        }
+    }
+
+    class Zwierze
+    {
+        //.....
+        public virtual Dictionary<string, object> Pakuj()
+        {
+            return null;
+        }
+    }
+
+    class Pies: Zwierze
+    {
+        //.....
+        public override Dictionary<string, object> Pakuj()
+        {
+            return null;
+        }
+    }
+
+    class Kot: Zwierze
+    {
+        //.....
+        public override Dictionary<string, object> Pakuj()
+        {
+            return null;
         }
     }
 
