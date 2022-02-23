@@ -51,6 +51,9 @@ namespace Polimorfizm.Geometria
 
             Pies pies = new Pies();
             SpakujIWyslij(pies);
+
+            /*List<int> l = new System.Collections.Generic.List<int>();
+            l.Sort(new Obiekt())*/
         }
 
         void PracaNaObiekcie(Figura f)
@@ -94,7 +97,7 @@ namespace Polimorfizm.Geometria
         public void SpakujIWyslij(IPakowalne obiektDoWyslania)
         {
             Dictionary<string, object> dana = obiektDoWyslania.PakujInterfejs();
-
+           
             WyslijDane wyslijDane = new WyslijDane();
             wyslijDane.Wyslij(dana);
         }
@@ -118,12 +121,17 @@ namespace Polimorfizm.Geometria
         }
     }
 
-    class Kot: Zwierze
+    class Kot: Zwierze, IPakowalne
     {
         //.....
         public override Dictionary<string, object> Pakuj()
         {
             return null;
+        }
+
+        public Dictionary<string, object> PakujInterfejs()
+        {
+            throw new NotImplementedException();
         }
     }
 

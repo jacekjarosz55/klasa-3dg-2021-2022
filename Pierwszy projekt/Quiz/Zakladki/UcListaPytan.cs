@@ -15,7 +15,7 @@ namespace Quiz.Zakladki
 {
     public partial class UcListaPytan : UserControl
     {
-        public ListRepository Repository;
+        public IRepository Repository;
 
         private PytanieOdpowiedzQuiz aktualnePytanie;
         private List<PytanieOdpowiedzQuiz> listaPytanOdpowiedzi = new List<PytanieOdpowiedzQuiz>();

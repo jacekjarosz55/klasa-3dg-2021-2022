@@ -13,15 +13,15 @@ namespace Quiz
 {
     public partial class OknoQuiz : Form
     {
-        private ListRepository Repository;
-        private DbRepository RepositoryDB;
+        private IRepository Repository;
+        
 
         public OknoQuiz()
         {
             InitializeComponent();
 
-            Repository = new ListRepository();
-            RepositoryDB = new DbRepository();
+            //Repository = new ListRepository();
+            Repository = new DbRepository();
             ucListaPytan.Repository = Repository;
             ucListaPytan.RefreshData();
         }

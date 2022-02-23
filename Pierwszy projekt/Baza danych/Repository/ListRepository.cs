@@ -8,7 +8,7 @@ using Baza_danych.QuizAutoMapper;
 
 namespace Baza_danych.Repository
 {
-    public class ListRepository
+    public class ListRepository : IRepository
     {
         List<Pytanie> pytaniaLista;
         List<Odpowiedz> odpowiedziLista;
