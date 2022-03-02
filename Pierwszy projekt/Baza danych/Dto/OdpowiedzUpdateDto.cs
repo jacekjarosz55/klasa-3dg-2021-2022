@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Baza_danych.Dto
 {
-    public class OdpowiedzReadDto
+    public class OdpowiedzUpdateDto
     {
         public int Id { get; set; }
         public string TrescOdpowiedzi { get; set; }

@@ -1,149 +1,191 @@
-﻿using Baza_danych.Dto;
-using Baza_danych.Model;
+﻿using Quiz.Baza_danych.Model;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using Baza_danych.QuizAutoMapper;
+using System.Linq;
+using AutoMapper;
+using Baza_danych.Dto;
+using Baza_danych.Automapper;
 
 namespace Baza_danych.Repository
 {
     public class ListRepository : IRepository
     {
-        List<Pytanie> pytaniaLista;
-        List<Odpowiedz> odpowiedziLista;
+        List<Pytanie> pytanieList;
+        List<Odpowiedz> odpowiedziList;
 
-        QuizAutomapper quizAutomapper = new QuizAutomapper();
+
+        QuizAutomaper quizAutomaper = new QuizAutomaper();
 
         public ListRepository()
         {
-            pytaniaLista = new List<Pytanie>();
-            odpowiedziLista = new List<Odpowiedz>();
+            pytanieList = new List<Pytanie>();
+            odpowiedziList = new List<Odpowiedz>();
 
-            Pytanie pytanie = new Pytanie();
-            pytanie.Id = 0;
-            pytanie.TrescPytania = "Ile wynosi wynik operacji 2+2?";
-            pytaniaLista.Add(pytanie);
+            //przykładowe pytania
+            int idPytania = CreatePytanie("Ile wynosi wynik operacji 2+2?");
 
-            Odpowiedz odpowiedz = new Odpowiedz();
-            odpowiedz.Id = 0;
-            odpowiedz.TrescOdpowiedzi = "2";
-            odpowiedz.CzyPrawidlowa = false;
-            odpowiedz.IdPytania = 0;
-            odpowiedziLista.Add(odpowiedz);
+            CreateOdpowiedz(idPytania, "2");
+            CreateOdpowiedz(idPytania, "4", true);
+            CreateOdpowiedz(idPytania, "6");
 
-            odpowiedz = new Odpowiedz();
-            odpowiedz.Id = 1;
-            odpowiedz.TrescOdpowiedzi = "4";
-            odpowiedz.CzyPrawidlowa = true;
-            odpowiedz.IdPytania = 0;
-            odpowiedziLista.Add(odpowiedz);
+            idPytania = CreatePytanie("Identyfiaktory dostępu do składowych klasy to:");
 
-            odpowiedz = new Odpowiedz();
-            odpowiedz.Id = 2;
-            odpowiedz.TrescOdpowiedzi = "6";
-            odpowiedz.CzyPrawidlowa = false;
-            odpowiedz.IdPytania = 0;
-            odpowiedziLista.Add(odpowiedz);
+            CreateOdpowiedz(idPytania, "virtual");
+            CreateOdpowiedz(idPytania, "public", true);
+            CreateOdpowiedz(idPytania, "private", true);
+            CreateOdpowiedz(idPytania, "static");
 
-            pytanie = new Pytanie();
-            pytanie.Id = 1;
-            pytanie.TrescPytania = "Identyfiaktory dostępu do składowych klasy to:";
-            pytaniaLista.Add(pytanie);
-
-            odpowiedz = new Odpowiedz();
-            odpowiedz.Id = 3;
-            odpowiedz.TrescOdpowiedzi = "virtual";
-            odpowiedz.CzyPrawidlowa = false;
-            odpowiedz.IdPytania = 1;
-            odpowiedziLista.Add(odpowiedz);
-
-            odpowiedz = new Odpowiedz();
-            odpowiedz.Id = 4;
-            odpowiedz.TrescOdpowiedzi = "public";
-            odpowiedz.CzyPrawidlowa = true;
-            odpowiedz.IdPytania = 1;
-            odpowiedziLista.Add(odpowiedz);
-
-            odpowiedz = new Odpowiedz();
-            odpowiedz.Id = 5;
-            odpowiedz.TrescOdpowiedzi = "protected";
-            odpowiedz.CzyPrawidlowa = true;
-            odpowiedz.IdPytania = 1;
-            odpowiedziLista.Add(odpowiedz);
-
-            odpowiedz = new Odpowiedz();
-            odpowiedz.Id = 6;
-            odpowiedz.TrescOdpowiedzi = "static";
-            odpowiedz.CzyPrawidlowa = false;
-            odpowiedz.IdPytania = 1;
-            odpowiedziLista.Add(odpowiedz);
         }
 
         #region CRUD
 
-        #region C - Create
+        #region Create
 
+        private int CreatePytanie(string trescPytania)
+        {
+            Pytanie pytanie = new Pytanie();
+            pytanie.Id = pytanieList.Count == 0 ? 0 : pytanieList.Max(pytanie => pytanie.Id) + 1;
+            pytanie.TrescPytania = trescPytania;
+
+            pytanieList.Add(pytanie);
+
+            return pytanie.Id;
+        }
+
+        private int CreateOdpowiedz(int idPytania, string trescOdpowiedzi, bool czyPoprawna = false)
+        {
+            Odpowiedz odpowiedz = new Odpowiedz();
+            odpowiedz.Id = odpowiedziList.Count == 0 ? 0 : odpowiedziList.Max(odpowiedz => odpowiedz.Id) + 1;
+            odpowiedz.TrescOdpowiedzi = trescOdpowiedzi;
+            odpowiedz.CzyPoprawna = czyPoprawna;
+            odpowiedz.PytanieId = idPytania;
+            odpowiedziList.Add(odpowiedz);
+
+            return odpowiedz.Id;
+        }
+
+        public int CreatePytanie(PytanieCreateDto pytanieCreateDto)
+        {
+            Pytanie pytanie = new Pytanie();
+            pytanie.Id = pytanieList.Count == 0 ? 0 : pytanieList.Max(pytanie => pytanie.Id) + 1;
+            pytanie.TrescPytania = pytanieCreateDto.TrescPytania;
+
+            pytanieList.Add(pytanie);
+
+            return pytanie.Id;
+        }
+
+        public void CreateOdpowiedz(OdpowiedzCreateDto odpowiedzCreateDto)
+        {
+            Odpowiedz odpowiedz = quizAutomaper.Mapper.Map<Odpowiedz>(odpowiedzCreateDto);
+            odpowiedz.Id = odpowiedziList.Count == 0 ? 0 : odpowiedziList.Max(odpowiedz => odpowiedz.Id) + 1;
+            odpowiedziList.Add(odpowiedz);
+        }
 
         #endregion
 
-        #region R - Read
+        #region Read
+
+        public int ReadPytaniaCount()
+        {
+            return pytanieList.Count;
+        }
 
         public List<int> ReadPytaniaIdList()
         {
-            var result = pytaniaLista.Select(p => p.Id).ToList();
+            List<int> result = pytanieList.Select(pytanie => pytanie.Id).ToList();
             return result;
         }
 
-        public List<PytanieReadDto> ReadListaPytan()
+        public List<PytanieReadDto> ReadPytania()
         {
-            List<PytanieReadDto> readPytanieDtos = quizAutomapper.Mapper.Map<List<PytanieReadDto>>(pytaniaLista);
-            return readPytanieDtos;
+            List<PytanieReadDto> pytanieReadDtoLista = quizAutomaper.Mapper.Map<List<PytanieReadDto>>(pytanieList);
+
+            return pytanieReadDtoLista;
+        }
+
+        public List<PytanieReadDto> ReadRandomPytania(int count)
+        {
+            Random rng = new Random();
+            count = Math.Min(count, pytanieList.Count);
+            List<Pytanie> randomList = pytanieList.OrderBy((Pytanie pytanie) => rng.Next()).Take(count).ToList();
+            return quizAutomaper.Mapper.Map<List<PytanieReadDto>>(randomList);
         }
 
         public PytanieReadDto ReadPytanie(int id)
         {
-            Pytanie pytanie = pytaniaLista.FirstOrDefault(p => /*return*/ p.Id == id);
-            if (pytanie == null)
-                throw new Exception("Nie znaleziono pytania o podanym ID");
-
-            PytanieReadDto readPytanieDto = quizAutomapper.Mapper.Map<PytanieReadDto>(pytanie);
-            return readPytanieDto;
+            Pytanie result = pytanieList.FirstOrDefault(pytanie => pytanie.Id == id);
+            if (result == null)
+                result = new Pytanie()
+                {
+                    Id = -1
+                };
+            PytanieReadDto resultDto = quizAutomaper.Mapper.Map<PytanieReadDto>(result);
+            return resultDto;
         }
 
         public List<OdpowiedzReadDto> ReadOdpowiedzi(int idPytania)
         {
-            List<Odpowiedz> odpowiedzi = odpowiedziLista.Where(o => o.IdPytania == idPytania).ToList();
-
-            List<OdpowiedzReadDto> result = quizAutomapper.Mapper.Map<List<OdpowiedzReadDto>>(odpowiedzi);
-
-            return result;
+            List<Odpowiedz> result = odpowiedziList.Where(odpowiedz => odpowiedz.PytanieId == idPytania).ToList();
+            if (result == null)
+                result = new List<Odpowiedz>();
+            List<OdpowiedzReadDto> resultDto = quizAutomaper.Mapper.Map<List<OdpowiedzReadDto>>(result);
+            return resultDto;
         }
 
-
-
-        #endregion
-
-        #region U - Update
-
-
-
-        #endregion
-
-        #region D - Delete
-
-        public void DeleteOdpowiedzi(int idPytanie)
+        public List<OdpowiedzReadDto> ReadOdpowiedzi(List<int> idPytaniaLista)
         {
-            odpowiedziLista.RemoveAll(odp => odp.IdPytania == idPytanie);
-        }
-
-        public void DeletePytanie(int idPytanie)
-        {
-            pytaniaLista.RemoveAll(pyt => pyt.Id == idPytanie);
+            List<Odpowiedz> result = odpowiedziList.Where(odpowiedz => idPytaniaLista.Contains(odpowiedz.PytanieId)).ToList();
+            if (result == null)
+                throw new Exception("Nie znaleziono elementu");
+            List<OdpowiedzReadDto> resultDto = quizAutomaper.Mapper.Map<List<OdpowiedzReadDto>>(result);
+            return resultDto;
         }
 
         #endregion
 
+        #region Update
+
+        public bool UpdatePytanie(PytanieUpdateDto pytanieUpdateDto)
+        {
+            Pytanie pytanieDoUpdate = pytanieList.FirstOrDefault(pyt => pyt.Id == pytanieUpdateDto.Id);
+            if (pytanieDoUpdate == null)
+                return false;
+
+            quizAutomaper.Mapper.Map(pytanieUpdateDto, pytanieDoUpdate);
+            return true;
+        }
+
+        public bool UpdateOdpowiedz(OdpowiedzUpdateDto odpowiedzUpdateDto)
+        {
+            Odpowiedz odpowiedzDoUpdate = odpowiedziList.FirstOrDefault(odp => odp.Id == odpowiedzUpdateDto.Id);
+            if (odpowiedzDoUpdate == null)
+                return false;
+            quizAutomaper.Mapper.Map(odpowiedzUpdateDto, odpowiedzDoUpdate);
+            return true;
+        }
+
+        #endregion
+
+        #region Delete
+
+        public void DeletePytanie(PytanieDeleteDto pytanieDeleteDto)
+        {
+            pytanieList.RemoveAll(pytanie => pytanie.Id == pytanieDeleteDto.Id);
+        }
+
+        public void DeleteOdpowiedz(OdpowiedzDeleteDto odpowiedzDeleteDto)
+        {
+            odpowiedziList.RemoveAll(odpowiedz => odpowiedz.Id == odpowiedzDeleteDto.Id);
+        }
+
+        public void DeleteOdpowiedz(List<OdpowiedzDeleteDto> odpowiedzDeleteDtoList)
+        {
+            odpowiedzDeleteDtoList.ForEach(odpowiedzDeleteDto => DeleteOdpowiedz(odpowiedzDeleteDto));
+        }
+
+        #endregion
 
         #endregion
     }

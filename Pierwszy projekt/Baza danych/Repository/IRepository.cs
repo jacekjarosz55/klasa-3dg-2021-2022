@@ -5,11 +5,19 @@ namespace Baza_danych.Repository
 {
     public interface IRepository
     {
-        void DeleteOdpowiedzi(int idPytanie);
-        void DeletePytanie(int idPytanie);
-        List<PytanieReadDto> ReadListaPytan();
+        void CreateOdpowiedz(OdpowiedzCreateDto odpowiedzCreateDto);
+        int CreatePytanie(PytanieCreateDto pytanieCreateDto);
+        void DeleteOdpowiedz(List<OdpowiedzDeleteDto> odpowiedzDeleteDtoList);
+        void DeleteOdpowiedz(OdpowiedzDeleteDto odpowiedzDeleteDto);
+        void DeletePytanie(PytanieDeleteDto pytanieDeleteDto);
         List<OdpowiedzReadDto> ReadOdpowiedzi(int idPytania);
+        List<OdpowiedzReadDto> ReadOdpowiedzi(List<int> idPytaniaLista);
+        List<PytanieReadDto> ReadPytania();
+        //int ReadPytaniaCount();
         List<int> ReadPytaniaIdList();
         PytanieReadDto ReadPytanie(int id);
+        List<PytanieReadDto> ReadRandomPytania(int count);
+        bool UpdateOdpowiedz(OdpowiedzUpdateDto odpowiedzUpdateDto);
+        bool UpdatePytanie(PytanieUpdateDto pytanieUpdateDto);
     }
 }

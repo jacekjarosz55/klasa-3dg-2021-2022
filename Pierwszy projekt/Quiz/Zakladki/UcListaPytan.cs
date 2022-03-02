@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using Baza_danych.Dto;
-using Baza_danych.Model;
 using Baza_danych.Repository;
 using Quiz.Okna_pomocnicze;
 
@@ -15,10 +10,10 @@ namespace Quiz.Zakladki
 {
     public partial class UcListaPytan : UserControl
     {
-        public IRepository Repository;
+        public IRepository Repository { get; set; }
 
-        private PytanieOdpowiedzQuiz aktualnePytanie;
-        private List<PytanieOdpowiedzQuiz> listaPytanOdpowiedzi = new List<PytanieOdpowiedzQuiz>();
+        List<PytanieOdpowiedziQuiz> listaPytanOdpowiedzi = new List<PytanieOdpowiedziQuiz>();
+        PytanieOdpowiedziQuiz aktualnePytanie;
 
         public UcListaPytan()
         {
@@ -33,98 +28,187 @@ namespace Quiz.Zakladki
             comboBoxListaPytan.Items.Clear();
 
             List<int> listaPytanId = Repository.ReadPytaniaIdList();
-
             foreach (int id in listaPytanId)
             {
                 comboBoxListaPytan.Items.Add(id);
             }
 
             comboBoxListaPytan.SelectedIndexChanged += comboBoxListaPytan_SelectedIndexChanged;
-            if (aktualnaPozycja == comboBoxListaPytan.Items.Count)
-                aktualnaPozycja--;
             if (comboBoxListaPytan.Items.Count > 0 && aktualnaPozycja < 0)
-                aktualnaPozycja = 0;
+                aktualnaPozycja++;
             comboBoxListaPytan.SelectedIndex = aktualnaPozycja;
         }
 
         private void comboBoxListaPytan_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ucWyswietlPytanie.WyswietlPytanie = null;
+            ucWyswietlPytanie.WyswieltPytanie = null;
 
             if (comboBoxListaPytan.SelectedItem != null)
             {
-                int id;
-                int.TryParse(comboBoxListaPytan.SelectedItem.ToString(), out id);
+                int.TryParse(comboBoxListaPytan.SelectedItem.ToString(), out int id);
 
                 aktualnePytanie = PobierzPytanieOdpowiedz(listaPytanOdpowiedzi, id, true);
-                ucWyswietlPytanie.WyswietlPytanie = aktualnePytanie;
+                ucWyswietlPytanie.WyswieltPytanie = aktualnePytanie;
             }
-        }
-
-        private PytanieOdpowiedzQuiz PobierzPytanieOdpowiedz(List<PytanieOdpowiedzQuiz> lista, int id, bool czyZaznaczycPrawidlowe = false)
-        {
-            PytanieOdpowiedzQuiz szukanePytanieOdpowiedz = lista.FirstOrDefault(poq => poq.PytanieQuiz.ReadPytanieDto.Id == id);
-
-            if (szukanePytanieOdpowiedz == null)
-            {
-                szukanePytanieOdpowiedz = new PytanieOdpowiedzQuiz();
-                lista.Add(szukanePytanieOdpowiedz);
-
-                szukanePytanieOdpowiedz.PytanieQuiz = new PytanieQuiz();
-                szukanePytanieOdpowiedz.PytanieQuiz.ReadPytanieDto = Repository.ReadPytanie(id);
-                szukanePytanieOdpowiedz.PytanieQuiz.TextBoxPytanie = new TextBox()
-                {
-                    Text = szukanePytanieOdpowiedz.PytanieQuiz.ReadPytanieDto.TrescPytania,
-                    Dock = DockStyle.Fill,
-                    Multiline = true,
-                    ReadOnly = true
-                };
-
-                List<OdpowiedzReadDto> odpowiedzReadDtos = Repository.ReadOdpowiedzi(id);
-
-                /*
-                szukanePytanieOdpowiedz.OdpowiedziLista = new List<OdpowiedzQuiz>();
-                foreach (OdpowiedzReadDto odpowiedzReadDto in odpowiedzReadDtos)
-                {
-                    OdpowiedzQuiz odpowiedzQuiz = new OdpowiedzQuiz();
-                    odpowiedzQuiz.OdpowiedzReadDto = odpowiedzReadDto;
-                    odpowiedzQuiz.CheckBoxOdpowiedz = new CheckBox()
-                                    {
-                                        Text = odpowiedzReadDto.TrescOdpowiedzi,
-                                        Checked = czyZaznaczycPrawidlowe && odpowiedzReadDto.CzyPrawidlowa,
-                                        Enabled = false
-                                    };
-                    szukanePytanieOdpowiedz.OdpowiedziLista.Add(odpowiedzQuiz);
-                }
-                */
-                szukanePytanieOdpowiedz.OdpowiedziLista = odpowiedzReadDtos.Select(odpowiedzReadDto => new OdpowiedzQuiz()
-                {
-                    OdpowiedzReadDto = odpowiedzReadDto,
-                    CheckBoxOdpowiedz = new CheckBox()
-                    {
-                        Text = odpowiedzReadDto.TrescOdpowiedzi,
-                        Checked = czyZaznaczycPrawidlowe && odpowiedzReadDto.CzyPrawidlowa,
-                        Enabled = false
-                    }
-                }).ToList();
-
-            }
-            return szukanePytanieOdpowiedz;
         }
 
         private void buttonUsunPytanie_Click(object sender, EventArgs e)
         {
-            DialogResult dialogResult = MessageBox.Show("Czy usunąć aktualne pytanie?", "Usuwanie", MessageBoxButtons.YesNo);
+            DialogResult dialogResult = MessageBox.Show("Czy usunąć pytanie?", "Usuwanie", MessageBoxButtons.YesNo);
             if (dialogResult == DialogResult.Yes)
             {
-                int idPytania = aktualnePytanie.PytanieQuiz.ReadPytanieDto.Id;
-                Repository.DeleteOdpowiedzi(idPytania);
-                Repository.DeletePytanie(idPytania);
+                List<OdpowiedzDeleteDto> odpowiedzDeleteDtoLista = new List<OdpowiedzDeleteDto>();
+                odpowiedzDeleteDtoLista.AddRange(aktualnePytanie.OdpowiedziLista.Select(odpowiedzQuiz => new OdpowiedzDeleteDto()
+                {
+                    Id = odpowiedzQuiz.OdpowiedzReadDto.Id
+                }));
+                Repository.DeleteOdpowiedz(odpowiedzDeleteDtoLista);
+
+                Repository.DeletePytanie(new PytanieDeleteDto() { Id = aktualnePytanie.PytanieQuiz.PytanieReadDto.Id });
+                listaPytanOdpowiedzi.Remove(aktualnePytanie);
+
+                comboBoxListaPytan.SelectedIndexChanged -= comboBoxListaPytan_SelectedIndexChanged;
+
+                int aktualnyIndex = comboBoxListaPytan.SelectedIndex;
+                comboBoxListaPytan.Items.Remove(comboBoxListaPytan.SelectedItem);
+                if (aktualnyIndex == comboBoxListaPytan.Items.Count)
+                    aktualnyIndex--;
+                comboBoxListaPytan.SelectedIndex = aktualnyIndex;
+
+                comboBoxListaPytan.SelectedIndexChanged += comboBoxListaPytan_SelectedIndexChanged;
+                comboBoxListaPytan_SelectedIndexChanged(null, null);
+            }
+        }
+
+        public PytanieOdpowiedziQuiz PobierzPytanieOdpowiedz(List<PytanieOdpowiedziQuiz> lista, int idPytania, bool CzyZaznaczycPrawidlowe = false)
+        {
+            PytanieOdpowiedziQuiz pytanieOdpowiedziQuiz = lista.FirstOrDefault(poq => poq.PytanieQuiz.PytanieReadDto.Id == idPytania);
+            if (pytanieOdpowiedziQuiz == null)
+            {
+                pytanieOdpowiedziQuiz = new PytanieOdpowiedziQuiz();
+                lista.Add(pytanieOdpowiedziQuiz);
+
+                pytanieOdpowiedziQuiz.PytanieQuiz = new PytanieQuiz();
+
+                pytanieOdpowiedziQuiz.PytanieQuiz.PytanieReadDto = Repository.ReadPytanie(idPytania);
+                pytanieOdpowiedziQuiz.PytanieQuiz.TextBoxPytanie = new TextBox()
+                {
+                    Text = pytanieOdpowiedziQuiz.PytanieQuiz.PytanieReadDto.TrescPytania,
+                    Dock = DockStyle.Fill,
+                    Multiline = true,
+                    ScrollBars = ScrollBars.Both,
+                    ReadOnly = true
+                };
+
+                pytanieOdpowiedziQuiz.OdpowiedziLista = Repository.ReadOdpowiedzi(idPytania).Select(odpowiedzDto => new OdpowiedzQuiz()
+                {
+                    OdpowiedzReadDto = odpowiedzDto,
+                    CheckBoxOdpowiedzi = new CheckBox()
+                    {
+                        Text = odpowiedzDto.TrescOdpowiedzi,
+                        Checked = CzyZaznaczycPrawidlowe && odpowiedzDto.CzyPoprawna,
+                        Tag = odpowiedzDto.Id,
+                        Enabled = false
+                    }
+                }).ToList();
+            }
+            return pytanieOdpowiedziQuiz;
+        }
+
+        private void buttonEdytujPytanie_Click(object sender, EventArgs e)
+        {
+            PytanieOdpowiedziQuiz pytanieOdpowiedziQuiz = PobierzPytanieOdpowiedz(new List<PytanieOdpowiedziQuiz>(), aktualnePytanie.PytanieQuiz.PytanieReadDto.Id, true);
+            pytanieOdpowiedziQuiz.PytanieQuiz.TextBoxPytanie.ReadOnly = false;
+            pytanieOdpowiedziQuiz.OdpowiedziLista.ForEach(odpowiedzi =>
+            {
+                odpowiedzi.CheckBoxOdpowiedzi.Enabled = true;
+                odpowiedzi.CheckBoxOdpowiedzi.ThreeState = true;
+            });
+
+            OknoEdycjaPytania oknoEdycjaPytania = new OknoEdycjaPytania();
+            oknoEdycjaPytania.PytanieOdpowiedziQuiz = pytanieOdpowiedziQuiz;
+            oknoEdycjaPytania.Text = "Edycuja pytania";
+            if (oknoEdycjaPytania.ShowDialog() == DialogResult.Yes)
+            {
+                PytanieUpdateDto updatePytanieDto = new PytanieUpdateDto()
+                {
+                    Id = pytanieOdpowiedziQuiz.PytanieQuiz.PytanieReadDto.Id,
+                    TrescPytania = pytanieOdpowiedziQuiz.PytanieQuiz.TextBoxPytanie.Text
+                };
+
+                Repository.UpdatePytanie(updatePytanieDto);
+
+                foreach (OdpowiedzQuiz odpowiedzQuiz in pytanieOdpowiedziQuiz.OdpowiedziLista)
+                {
+                    OdpowiedzUpdateDto odpowiedzUpdateDto = new OdpowiedzUpdateDto()
+                    {
+                        Id = odpowiedzQuiz.OdpowiedzReadDto.Id,
+                        TrescOdpowiedzi = odpowiedzQuiz.OdpowiedzReadDto.TrescOdpowiedzi,
+                        CzyPoprawna = odpowiedzQuiz.CheckBoxOdpowiedzi.Checked,
+                        PytanieId = odpowiedzQuiz.OdpowiedzReadDto.PytanieId
+                    };
+                    if (!Repository.UpdateOdpowiedz(odpowiedzUpdateDto))
+                    {
+                        OdpowiedzCreateDto odpowiedz = new OdpowiedzCreateDto()
+                        {
+                            TrescOdpowiedzi = odpowiedzQuiz.OdpowiedzReadDto.TrescOdpowiedzi,
+                            CzyPoprawna = odpowiedzQuiz.CheckBoxOdpowiedzi.Checked,
+                            PytanieId = odpowiedzQuiz.OdpowiedzReadDto.PytanieId
+                        };
+                        Repository.CreateOdpowiedz(odpowiedz);
+                    }
+                }
+
+                List<OdpowiedzDeleteDto> odpowiedzDeleteDtoList = new List<OdpowiedzDeleteDto>();
+                odpowiedzDeleteDtoList.AddRange(oknoEdycjaPytania.ListaSkasowanychPozycji
+                                                                .Where(odpowiedzQuiz => odpowiedzQuiz.OdpowiedzReadDto.Id > 0)
+                                                                .Select(odpowiedzQuiz => new OdpowiedzDeleteDto()
+                                                                {
+                                                                    Id = odpowiedzQuiz.OdpowiedzReadDto.Id
+                                                                }));
+                Repository.DeleteOdpowiedz(odpowiedzDeleteDtoList);
 
                 listaPytanOdpowiedzi.Remove(aktualnePytanie);
-                RefreshData();
+                comboBoxListaPytan_SelectedIndexChanged(null, null);
+            }
+        }
+
+        private void buttonDodajPytanie_Click(object sender, EventArgs e)
+        {
+            PytanieOdpowiedziQuiz pytanieOdpowiedziQuiz = PobierzPytanieOdpowiedz(new List<PytanieOdpowiedziQuiz>(), -1, true);
+            pytanieOdpowiedziQuiz.PytanieQuiz.TextBoxPytanie.ReadOnly = false;
+            pytanieOdpowiedziQuiz.OdpowiedziLista.ForEach(odpowiedzi =>
+            {
+                odpowiedzi.CheckBoxOdpowiedzi.Enabled = true;
+                odpowiedzi.CheckBoxOdpowiedzi.ThreeState = true;
+            });
+
+            OknoEdycjaPytania oknoEdycjaPytania = new OknoEdycjaPytania();
+            oknoEdycjaPytania.PytanieOdpowiedziQuiz = pytanieOdpowiedziQuiz;
+            oknoEdycjaPytania.Text = "Nowe pytanie";
+            if (oknoEdycjaPytania.ShowDialog() == DialogResult.Yes)
+            {
+                PytanieCreateDto pytanieCreateDto = new PytanieCreateDto()
+                {
+                    TrescPytania = pytanieOdpowiedziQuiz.PytanieQuiz.TextBoxPytanie.Text
+                };
+
+                int idPytania = Repository.CreatePytanie(pytanieCreateDto);
+
+                foreach (OdpowiedzQuiz odpowiedzQuiz in pytanieOdpowiedziQuiz.OdpowiedziLista)
+                {
+                    OdpowiedzCreateDto odpowiedz = new OdpowiedzCreateDto()
+                    {
+                        TrescOdpowiedzi = odpowiedzQuiz.OdpowiedzReadDto.TrescOdpowiedzi,
+                        CzyPoprawna = odpowiedzQuiz.CheckBoxOdpowiedzi.Checked,
+                        PytanieId = idPytania
+                    };
+                    Repository.CreateOdpowiedz(odpowiedz);
+                }
             }
 
+            RefreshData();
         }
     }
 }
+

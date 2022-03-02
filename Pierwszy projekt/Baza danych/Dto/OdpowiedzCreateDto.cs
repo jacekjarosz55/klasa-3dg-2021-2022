@@ -4,9 +4,8 @@ using System.Text;
 
 namespace Baza_danych.Dto
 {
-    public class OdpowiedzReadDto
+    public class OdpowiedzCreateDto
     {
-        public int Id { get; set; }
         public string TrescOdpowiedzi { get; set; }
         public bool CzyPoprawna { get; set; }
         public int PytanieId { get; set; }

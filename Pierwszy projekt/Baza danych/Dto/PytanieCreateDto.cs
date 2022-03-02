@@ -4,9 +4,8 @@ using System.Text;
 
 namespace Baza_danych.Dto
 {
-    public class PytanieReadDto
+    public class PytanieCreateDto
     {
-        public int Id { get; set; }
         public string TrescPytania { get; set; }
     }
 }
