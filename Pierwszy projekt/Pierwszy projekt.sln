@@ -73,6 +73,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Baza danych", "Baza danych\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quiz", "Quiz\Quiz.csproj", "{E0A11A67-0099-4CF9-AAA6-3CB9618938E2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Terminarz siłownia", "Terminarz siłownia\Terminarz siłownia.csproj", "{222C73B5-162D-4118-915A-8CF746F97796}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -179,6 +181,10 @@ Global
 		{E0A11A67-0099-4CF9-AAA6-3CB9618938E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E0A11A67-0099-4CF9-AAA6-3CB9618938E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E0A11A67-0099-4CF9-AAA6-3CB9618938E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{222C73B5-162D-4118-915A-8CF746F97796}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{222C73B5-162D-4118-915A-8CF746F97796}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{222C73B5-162D-4118-915A-8CF746F97796}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{222C73B5-162D-4118-915A-8CF746F97796}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -216,6 +222,7 @@ Global
 		{D9EEA0FD-CA1F-439F-B70B-5007D1BB4D2E} = {7A4ACE6A-CF20-4E31-BFB6-750B0060F747}
 		{52B1D8A0-7BA7-4477-8C72-B13B3A1A4282} = {D88E5C85-2078-4B83-B1F8-683EB2877D75}
 		{E0A11A67-0099-4CF9-AAA6-3CB9618938E2} = {D88E5C85-2078-4B83-B1F8-683EB2877D75}
+		{222C73B5-162D-4118-915A-8CF746F97796} = {7A4ACE6A-CF20-4E31-BFB6-750B0060F747}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2DC62348-C442-45A0-B442-3212B816E6DF}
